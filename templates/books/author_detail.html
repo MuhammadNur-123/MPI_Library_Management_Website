@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ author.name }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'author_list' %}">Authors</a></li>
+        <li class="breadcrumb-item active">{{ author.name }}</li>
+    </ol>
+    <div class="card mb-4">
+        <div class="card-body">
+            <img src="{{ author.image.url }}" alt="{{ author.name }}" class="img-fluid mb-3" style="max-width: 200px;">
+            <p><strong>Bio:</strong> {{ author.bio }}</p>
+            <p><strong>Date of Birth:</strong> {{ author.date_of_birth }}</p>
+            <p><strong>Country:</strong> {{ author.get_country_display }}</p>
+
+            <a href="{% url 'edit_author' author.id %}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{% url 'delete_author' author.id %}" class="btn btn-sm btn-danger">Delete</a>
+
+            <a href="{% url 'author_list' %}" class="btn btn-secondary">Back to List</a>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}
