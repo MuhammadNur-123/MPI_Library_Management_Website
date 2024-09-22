@@ -7,7 +7,9 @@
         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
         <li class="breadcrumb-item active">Authors</li>
     </ol>
+    {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
     <a href="{% url 'add_author' %}" class="btn btn-primary mb-3">Add New Author</a>
+    {% endif %}
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>

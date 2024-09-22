@@ -10,6 +10,7 @@ class Loan(models.Model):
         ('Returned', 'Returned'),
     ]
     PAYMENT_METHODS = [
+        ('Cash', 'Cash'),
         ('Nogot', 'Nogot'),
         ('Bkash', 'Bkash'),
         ('Rocket', 'Rocket'),

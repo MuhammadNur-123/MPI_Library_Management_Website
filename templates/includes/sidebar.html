@@ -11,13 +11,13 @@
                 </li>
 
 
-                
+                {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
                 
                 <a class="nav-link" href="{% url 'all_users' %}">
                     <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                     Members
                 </a>
-               
+            {% endif %}
                 <a class="nav-link" href="{% url 'author_list' %}">
                     <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>  <!-- Icon for Authors -->
                     Authors
@@ -26,19 +26,38 @@
                     <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>  <!-- Icon for Books -->
                     Books
                 </a>
+                {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
                 <a class="nav-link" href="{% url 'loan_list' %}">
                     <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>  <!-- Icon for Books -->
                     Orders
                 </a>
+                {% endif %}
                 <a class="nav-link" href="{% url 'category_list'%}">
                     <div class="sb-nav-link-icon"><i class="fas fa-tags"></i></div>  <!-- Icon for Category -->
                     Category's
                 </a>
+                <a class="nav-link" href="{% url 'youtube_search' %}">
+                    <div class="sb-nav-link-icon">
+                        <i class="fab fa-youtube"></i> YouTube
+                      </div>
+                      
+                </a>
+                <a class="nav-link" href="{% url 'wikipedia_search' %}">
+                    <div class="sb-nav-link-icon">
+                        <i class="fab fa-wikipedia-w"></i> Wikipedia
+                    </div>
+                </a>
+                <a class="nav-link" href="{% url 'google_books_search' %}">
+                    <div class="sb-nav-link-icon">
+                        <i class="fab fa-wikipedia-w"></i> Google Books
+                    </div>
+                </a>
+                
             </div>
         </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    MPIL
+                    <span class="ms-2">{{ user.name }}</span>
                 </div>
             </nav>
         </div>

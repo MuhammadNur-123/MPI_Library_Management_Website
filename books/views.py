@@ -16,8 +16,7 @@ def author_detail(request, pk):
 
 @login_required(login_url='/login/')
 def add_author(request):
-    if not request.user.is_staff:
-        return redirect('author_list')
+    
     if request.method == "POST":
         form = AuthorForm(request.POST, request.FILES)
         if form.is_valid():
@@ -29,8 +28,7 @@ def add_author(request):
 
 @login_required(login_url='/login/')
 def edit_author(request, pk):
-    if not request.user.is_staff:
-        return redirect('author_list')
+    
     author = get_object_or_404(Author, pk=pk)
     if request.method == 'POST':
         form = AuthorForm(request.POST, instance=author)
@@ -42,8 +40,7 @@ def edit_author(request, pk):
     return render(request, 'books/edit_author.html', {'form': form, 'author': author})
 @login_required(login_url='/login/')
 def delete_author(request, pk):
-    if not request.user.is_staff:
-        return redirect('author_list')
+    
     author = get_object_or_404(Author, pk=pk)
     if request.method == 'POST':
         author.delete()
@@ -58,8 +55,7 @@ def book_list(request):
 
 @login_required(login_url='/login/')
 def add_book(request):
-    if not request.user.is_staff:
-        return redirect('book_list')
+    
     if request.method == "POST":
         form = BookForm(request.POST, request.FILES)
         if form.is_valid():
@@ -70,8 +66,7 @@ def add_book(request):
     return render(request, 'books/book_form.html', {'form': form})
 @login_required(login_url='/login/')
 def edit_book(request, pk):
-    if not request.user.is_staff:
-        return redirect('book_list') 
+    
     book = get_object_or_404(Book, pk=pk)
     if request.method == 'POST':
         form = BookForm(request.POST, instance=book)
@@ -84,8 +79,7 @@ def edit_book(request, pk):
 
 @login_required(login_url='/login/')
 def delete_book(request, pk):
-    if not request.user.is_staff:
-        return redirect('book_list')
+    
     book = get_object_or_404(Book, pk=pk)
     if request.method == 'POST':
         book.delete()
@@ -104,8 +98,7 @@ def category_list(request):
 # Create a new category
 @login_required(login_url='/login/')
 def category_create(request):
-    if not request.user.is_staff:
-        return redirect('category_list')
+    
     if request.method == 'POST':
         form = BookCategoryForm(request.POST)
         if form.is_valid():
@@ -118,8 +111,7 @@ def category_create(request):
 # Update an existing category
 @login_required(login_url='/login/')
 def category_update(request, pk):
-    if not request.user.is_staff:
-        return redirect('category_list')
+    
     category = get_object_or_404(BookCategory, pk=pk)
     if request.method == 'POST':
         form = BookCategoryForm(request.POST, instance=category)
@@ -133,8 +125,7 @@ def category_update(request, pk):
 # Delete a category
 @login_required(login_url='/login/')
 def category_delete(request, pk):
-    if not request.user.is_staff:
-        return redirect('category_list')
+    
     category = get_object_or_404(BookCategory, pk=pk)
     if request.method == 'POST':
         category.delete()

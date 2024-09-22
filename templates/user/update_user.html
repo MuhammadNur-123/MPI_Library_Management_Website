@@ -1,6 +1,5 @@
-
+<!-- update_user.html -->
 {% extends "base.html" %}
-
 {% block content %}
 <main>
     <div class="container-fluid px-4">
@@ -8,70 +7,15 @@
             <div class="card-body">
                 <h2 style="text-align: center;">Update User Information</h2>
 
-                <!-- The form uses the Django 'post' method to submit data to the 'update_user' view -->
                 <form method="post" action="{% url 'update_user' user.id %}" enctype="multipart/form-data">
                     {% csrf_token %}
-                    
-                    <!-- Display form fields with existing values -->
-                    <div class="form-group mt-3">
-                        <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
-                    </div>
-                    
-                    <div class="form-group mt-3">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
-                    </div>
+                    <!-- Render all fields with error handling -->
+                    {{ form.as_p }}
 
-                    <div class="form-group mt-3">
-                        <label for="roll">Roll</label>
-                        <input type="number" class="form-control" id="roll" name="roll" value="{{ user.roll }}" required>
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="department">Department</label>
-                        <select class="form-control" id="department" name="department" required>
-                            <option value="CMT" {% if user.department == "CMT" %}selected{% endif %}>Computer Technology</option>
-                            <option value="ENT" {% if user.department == "ENT" %}selected{% endif %}>Electronics Technology</option>
-                            <option value="RAC" {% if user.department == "RAC" %}selected{% endif %}>Refrigeration and Air Conditioning Technology</option>
-                            <option value="FD" {% if user.department == "FD" %}selected{% endif %}>Food Technology</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="session">Session</label>
-                        <input type="text" class="form-control" id="session" name="session" value="{{ user.session }}" required>
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="phone_number">Phone Number</label>
-                        <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ user.phone_number }}" required>
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="address">Address</label>
-                        <textarea class="form-control" id="address" name="address" rows="3" required>{{ user.address }}</textarea>
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="user_type">User Type</label>
-                        <select class="form-control" id="user_type" name="user_type" required>
-                            <option value="MEM" {% if user.user_type == "MEM" %}selected{% endif %}>Member</option>
-                            <option value="LIB" {% if user.user_type == "LIB" %}selected{% endif %}>Librarian</option>
-                            <option value="ADM" {% if user.user_type == "ADM" %}selected{% endif %}>Admin</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="image">Profile Image</label><br>
-                        <input type="file" class="form-control-file" id="image" name="image">
-                        {% if user.image %}
-                            <img src="{{ user.image.url }}" alt="Profile Image" width="100" height="100" class="mt-3">
-                        {% endif %}
-                    </div>
-                    
                     <button type="submit" class="btn btn-primary">Update User</button>
-                    <a href="{% url 'all_users' %}" class="btn btn-secondary mt-3">Cancel</a>  <!-- Button to cancel and go back -->
+                    {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
+                    <a href="{% url 'all_users' %}" class="btn btn-secondary mt-3">Cancel</a>
+                    {% endif %}
                 </form>
             </div>
         </div>

@@ -81,8 +81,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mpi',
+        'USER': 'mpi',
+        'PASSWORD': 'mpilibrary',
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
 
@@ -91,6 +95,17 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 #email :mpi4034@gmail.com ,password: 12345678
+
+# settings.py
+# settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'mpilibrary4034@gmail.com'  # Your Gmail email
+EMAIL_HOST_PASSWORD = 'your_app_password'  # The app password generated, not your regular password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -146,3 +161,15 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+YOUTUBE_API_KEY = 'AIzaSyC_LIGysmUHyRcXkN7hTRInZlVUGQeKLBw'
+# Example for storing any external API settings
+# Replace with your app name and email
+# Add the following configuration in settings.py
+WIKIPEDIA_API_CONFIG = {
+    'LANGUAGE': 'en',
+    
+}
+
+# Optionally, define the user agent here
+WIKIPEDIA_USER_AGENT = 'YourAppName/1.0 (contact@example.com)'
+

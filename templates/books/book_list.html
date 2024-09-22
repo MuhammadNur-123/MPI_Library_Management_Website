@@ -7,7 +7,9 @@
         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
         <li class="breadcrumb-item active">Books</li>
     </ol>
+    {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
     <a href="{% url 'add_book' %}" class="btn btn-primary mb-3">Add New Book</a>
+    {% endif %}
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
@@ -23,7 +25,9 @@
                         <th>Category</th>
                         <th>Available Copies</th>
                         <th>Language</th>
+                        {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
                         <th>Actions</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -42,10 +46,12 @@
                         <td>{{ book.category.name }}</td>
                         <td>{{ book.available_copies }}</td>
                         <td>{{ book.get_language_display }}</td>
+                        {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
                         <td>
                             <a href="{% url 'edit_book' book.id %}" class="btn btn-sm btn-warning">Edit</a>
                             <a href="{% url 'delete_book' book.id %}" class="btn btn-sm btn-danger">Delete</a>
                         </td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

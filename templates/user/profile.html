@@ -36,8 +36,10 @@
                     <p><strong>Department:</strong> {{ user.get_department_display }}</p>
                     <p><strong>Membership Number:</strong> {{ user.membership_number }}</p>
                 </div>
+                <a href="{% url 'update_user' user.id %}" class="btn btn-primary mt-3">Edit Profile</a>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock content %}

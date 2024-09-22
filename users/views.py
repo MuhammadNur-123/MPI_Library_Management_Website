@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import User
 from .forms import UserForm
+from .forms import UserForm1
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -11,8 +12,7 @@ def profile_view(request):
     return render(request, 'user/profile.html', {'user': request.user})
 @login_required(login_url='login')
 def all_users(request):
-    if not request.user.is_staff:
-        return redirect('dashboard')
+    
     users = User.objects.all()
     
     query = request.GET.get('q')
@@ -38,8 +38,7 @@ def all_users(request):
 
 
 def create_user(request):
-    # if not request.user.is_staff:
-    #     return redirect('all_users')
+   
     if request.method == 'POST':
         email = request.POST.get('email')
         name = request.POST.get('name')
@@ -77,8 +76,7 @@ def create_user(request):
     return render(request, 'user/user_registration.html')
 
 def update_user_status(request, user_id):
-    if not request.user.is_staff:
-        return redirect('all_users')
+    
     if request.method == 'POST':
         
         user = get_object_or_404(User, id=user_id)
@@ -90,22 +88,36 @@ def update_user_status(request, user_id):
 
 @login_required(login_url='login')
 def update_user(request, user_id):
-    if not request.user.is_staff:
-        return redirect('all_users')
+    # Get the user object by ID
     user = get_object_or_404(User, id=user_id)
+    
     if request.method == 'POST':
-        form = UserForm(request.POST, request.FILES, instance=user)
+        # Pass POST data and FILES to the form for validation
+        form = UserForm1(request.POST, request.FILES, instance=user)
+        
         if form.is_valid():
-            form.save()
-            return redirect('all_users')  # Redirect to 'all_users' after updating
+            form.save()  # Save the updated user object
+            messages.success(request, 'User information updated successfully!')
+            return redirect('profile_view')  # Redirect to a user list or another page
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    
     else:
-        form = UserForm(instance=user)
-    return render(request, 'user/update_user.html', {'form': form, 'user': user})
+        # If it's a GET request, populate the form with the existing user data
+        form = UserForm1(instance=user)
+    
+    context = {
+        'form': form,
+        'user': user
+    }
+    return render(request, 'user/update_user.html', context)
+
+
+
 
 @login_required(login_url='login')
 def delete_user(request, user_id):
-    if not request.user.is_staff:
-        return redirect('all_users')
+    
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
         user.delete()

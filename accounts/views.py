@@ -1,20 +1,39 @@
+from pipes import quote
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from users.models import User
+
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-
 from books.models import Book, Author
 from users.models import User
 from library.models import Loan
+from django.conf import settings
+from isodate import parse_duration
+from googleapiclient.discovery import build
+
+import requests
+
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
+import wikipedia
 
 
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    template_name = 'login/password_reset_form.html'
+    success_url = reverse_lazy('password_reset_done')
+    email_template_name = 'login/password_reset_email.html'
 
-# def custom_login(request):
-#     # Custom login logic
-#     return render(request, 'login.html')
+class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = 'login/password_reset_done.html'
+
+class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = 'login/password_reset_confirm.html'
+
+class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = 'login/password_reset_complete.html'
+
+
 
 
 def login_view(request):
@@ -86,14 +105,163 @@ def dashboard_view(request):
     total_books = Book.objects.count()
     total_authors = Author.objects.count()
     total_orders = Loan.objects.count()  # Assuming "Order" is represented by Loan
-    total_admin_librarians = User.objects.filter(user_type__in=['ADM', 'LIB']).count()
+    total_admin = User.objects.filter(user_type='ADM').count()
+    total_libraian = User.objects.filter(user_type='LIB').count()
 
     context = {
         'total_members': total_members,
         'total_books': total_books,
         'total_authors': total_authors,
         'total_orders': total_orders,
-        'total_admin_librarians': total_admin_librarians,
+        'total_admin': total_admin,
+        'total_libraian': total_libraian,
     }
 
     return render(request, 'admin/dashboard.html', context)
+
+def youtube_search(request):
+    videos = []
+    if request.method == "POST":
+        search_url = 'https://www.googleapis.com/youtube/v3/search'
+        video_url = 'https://www.googleapis.com/youtube/v3/videos'
+
+        search_params = {
+            'part': 'snippet',
+            'q': request.POST['search'],
+            'key': settings.YOUTUBE_API_KEY,
+            'maxResults': 10,
+            'type': 'video',
+        }
+
+        video_ids = []
+        r = requests.get(search_url, params=search_params)
+        results = r.json()['items']
+        for result in results:
+            video_ids.append(result['id']['videoId'])
+
+        video_params = {
+            'part': 'snippet, contentDetails',
+            'key': settings.YOUTUBE_API_KEY,
+            'id': ','.join(video_ids),
+            'maxResults': 18,
+        }
+        r = requests.get(video_url, params=video_params)
+        results = r.json()['items']
+        for result in results:
+            video_data = {
+                'title': result['snippet']['title'],
+                'id': result['id'],
+                'url': f'https://www.youtube.com/watch?v={result["id"]}',
+                'thumbnail': result['snippet']["thumbnails"]['high']['url'],
+                'duration': int(parse_duration(result['contentDetails']["duration"]).total_seconds()//60),
+            }
+            videos.append(video_data)
+    context = {
+        'videos': videos
+    }
+    return  render(request, 'youtube/youtube.html', context)
+
+
+
+
+# Your view for Wikipedia search
+
+
+
+def wikipedia_search(request):
+    results = []
+    
+    if request.method == "POST":
+        search_query = request.POST.get('search', '')
+
+        try:
+            # Perform the search using the wikipedia library
+            search_results = wikipedia.search(search_query, results=5)  # Limit search to 10 results
+
+            for title in search_results:
+                try:
+                    page = wikipedia.page(title)
+                    result_data = {
+                        'title': page.title,
+                        'url': page.url,
+                        'summary': page.summary[:200],  # First 500 characters of the summary
+                        'image': page.images[0] if page.images else None,  # First image if available
+                        'dimensions': "Not available"  # Dimensions info might not be available via the API
+                    }
+                    results.append(result_data)
+                except wikipedia.exceptions.PageError:
+                    results.append({'error': f'Page not found for "{title}"'})
+                except Exception as e:
+                    results.append({'error': f'An error occurred while fetching page "{title}": {e}'})
+
+        except wikipedia.exceptions.DisambiguationError as e:
+            results.append({'error': f'Disambiguation error: {e}'})
+        except Exception as e:
+            results.append({'error': f'An error occurred: {e}'})
+
+    context = {
+        'results': results
+    }
+    return render(request, 'wikipedia/wikipedia.html', context)
+
+
+import requests
+from django.shortcuts import render
+
+# Google Books API key from Google Developer Console
+GOOGLE_BOOKS_API_KEY = 'YOUR_GOOGLE_BOOKS_API_KEY'
+
+def google_books_search(request):
+    books = []
+
+    if request.method == "POST":
+        search_query = request.POST.get('search', '')
+
+        if not search_query:
+            return render(request, 'google_books/google_books_search.html', {'books': books, 'error': 'No search query provided'})
+
+        # Safely encode the search query
+        encoded_query = quote(search_query)
+
+        # API URL for Google Books search
+        api_url = f'https://www.googleapis.com/books/v1/volumes?q={encoded_query}&key={GOOGLE_BOOKS_API_KEY}&maxResults=6'
+
+        try:
+            # Make a request to Google Books API
+            response = requests.get(api_url)
+
+            # Debug: Print the response
+            print(f"API Response Status: {response.status_code}")
+            print(f"API Response: {response.text}")
+
+            # Check if the response is successful
+            if response.status_code == 200:
+                search_response = response.json()
+
+                # Check if items key exists in the response
+                if 'items' in search_response:
+                    # Parse the search results
+                    for item in search_response['items']:
+                        volume_info = item.get('volumeInfo', {})
+                        book_data = {
+                            'title': volume_info.get('title', 'No title available'),
+                            'authors': ', '.join(volume_info.get('authors', ['Unknown author'])),
+                            'thumbnail': volume_info.get('imageLinks', {}).get('thumbnail', 'No image available'),
+                            'description': volume_info.get('description', 'No description available'),
+                            'infoLink': volume_info.get('infoLink', '#'),
+                        }
+                        books.append(book_data)
+                else:
+                    books.append({'error': 'No books found for the search query.'})
+            else:
+                # Handle unsuccessful API request
+                books.append({'error': f'Google Books API error: {response.status_code}'})
+
+        except Exception as e:
+            # Handle any other exception
+            books.append({'error': f'An error occurred: {e}'})
+
+    context = {
+        'books': books
+    }
+    return render(request, 'google_books/google_books_search.html', context)

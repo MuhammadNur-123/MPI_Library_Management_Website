@@ -98,3 +98,21 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+# models.py
+
+
+class User1(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    roll = models.IntegerField()
+    department = models.CharField(max_length=15, choices=[('CMT', 'Computer Technology'), ('ENT', 'Electronics Technology'),
+        ('RAC', 'Refrigeration and Air Conditioning Technology'),
+        ('FD', 'Food Technology')])
+    session = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=15)
+    address = models.TextField()
+    user_type = models.CharField(max_length=3, choices=[('MEM', 'Member'), ('LIB', 'Librarian'), ('ADM', 'Admin')])
+    image = models.ImageField(upload_to='profiles/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name

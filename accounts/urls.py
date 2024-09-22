@@ -6,12 +6,17 @@ urlpatterns = [
     path('', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout_view'),
     path('register/', views.register_view, name='register'),
-    path('forgot_password/', views.forgot_password_view, name='forgot_password'),
+   
     path('dashboard/', views.dashboard_view, name='dashboard'),
 
+    path('password-reset/', auth_views.PasswordResetView.as_view(template_name='login/password_reset.html'), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='login/password_reset_done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='login/password_reset_confirm.html'), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='login/password_reset_complete.html'), name='password_reset_complete'),
     
-    # path('login/', views.custom_login, name='login'),
-    # path('', auth_views.LoginView.as_view(), name='login'),
-    # path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('youtube/', views.youtube_search, name='youtube_search'),
+    path('wikipedia/', views.wikipedia_search, name='wikipedia_search'),
+    path('google-books-search/', views.google_books_search, name='google_books_search'),
+   
 
 ]

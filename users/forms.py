@@ -1,5 +1,11 @@
 from django import forms
 from .models import User
+from .models import User1
+
+class UserForm1(forms.ModelForm):
+    class Meta:
+        model = User1
+        fields = ['name', 'email', 'roll', 'department', 'session', 'phone_number', 'address', 'user_type', 'image']
 
 class UserForm(forms.ModelForm):
     class Meta:

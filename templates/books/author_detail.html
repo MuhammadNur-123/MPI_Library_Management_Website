@@ -14,10 +14,10 @@
             <p><strong>Bio:</strong> {{ author.bio }}</p>
             <p><strong>Date of Birth:</strong> {{ author.date_of_birth }}</p>
             <p><strong>Country:</strong> {{ author.get_country_display }}</p>
-
+            {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
             <a href="{% url 'edit_author' author.id %}" class="btn btn-sm btn-warning">Edit</a>
             <a href="{% url 'delete_author' author.id %}" class="btn btn-sm btn-danger">Delete</a>
-
+             {% endif %}
             <a href="{% url 'author_list' %}" class="btn btn-secondary">Back to List</a>
 
         </div>

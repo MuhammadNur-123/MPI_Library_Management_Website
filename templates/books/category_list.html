@@ -3,13 +3,17 @@
 {% block content %}
 <div class="container mt-4">
     <h1>Book Categories</h1>
+    {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
     <a href="{% url 'category_create' %}" class="btn btn-primary mb-3">Create New Category</a>
+    {% endif %}
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Description</th>
+                {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
                 <th>Actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -17,10 +21,12 @@
             <tr>
                 <td>{{ category.name }}</td>
                 <td>{{ category.description }}</td>
+                {% if user.user_type == 'LIB' or user.user_type == 'ADM' %}
                 <td>
                     <a href="{% url 'category_update' category.pk %}" class="btn btn-warning btn-sm">Edit</a>
                     <a href="{% url 'category_delete' category.pk %}" class="btn btn-danger btn-sm">Delete</a>
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
